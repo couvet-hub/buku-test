@@ -1,0 +1,22 @@
+Baca materi ini:
+---
+{MATERI}
+---
+
+Buat 5 soal SAJA dari SEMUA BAB SMP. 
+Untuk SETIAP soal berikan 4 cara jawab: Soroboa, Jepang, China, Barat.
+
+Format WAJIB JSON Array:
+[
+  {
+    "question": "...",
+    "topic": "...",
+    "methods": {
+      "Soroboa": {"steps": ["..."], "answer": "..."},
+      "Jepang": {"steps": ["..."], "answer": "..."},
+      "China": {"steps": ["..."], "answer": "..."},
+      "Barat": {"steps": ["..."], "answer": "..."}
+    }
+  }
+]
+JSON harus valid.
