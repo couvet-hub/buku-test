@@ -14,6 +14,9 @@ jobs:
         with:
           python-version: '3.10'
           
+      - name: Install requests
+        run: pip install requests # <-- INI YANG DITAMBAH
+          
       - name: Generate Soal
         env:
           TOGETHER_API_KEY: ${{ secrets.TOGETHER_API_KEY }}
@@ -23,14 +26,14 @@ jobs:
           
           API_KEY = os.environ["TOGETHER_API_KEY"]
           API_URL = "https://api.together.xyz/v1/chat/completions"
-          MODEL = "Qwen/Qwen2.5-7B-Instruct-Turbo" # INI MODELNYA UDAH DISET
+          MODEL = "Qwen/Qwen2.5-7B-Instruct-Turbo"
           
           headers = {"Authorization": f"Bearer {API_KEY}"}
           
           prompt = "Buatkan 50 soal pilihan ganda Bahasa Indonesia untuk SD kelas 5. Format JSON: [{\"soal\": \"...\", \"a\": \"...\", \"b\": \"...\", \"c\": \"...\", \"d\": \"...\", \"jawaban\": \"A\"}]"
           
           data = {
-            "model": MODEL, # GAK PERLU GANTI2
+            "model": MODEL,
             "messages": [{"role": "user", "content": prompt}],
             "temperature": 0.7
           }
