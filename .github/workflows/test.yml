@@ -1,0 +1,48 @@
+name: Test JSON 5 Soal 4 Metode
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 0. HAPUS SAMPAH RUNNER
+        run: |
+          df -h
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc
+          df -h
+
+      - name: 1. Install tools
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils
+
+      - name: 2. Download Qwen CLI + Model 7B Q4
+        run: |
+          wget -q https://github.com/ggerganov/llama.cpp/releases/download/b9999/llama-b9999-bin-ubuntu.zip
+          unzip -q llama-b9999-bin-ubuntu.zip
+          wget -q https://huggingface.co/Qwen/Qwen2.5-7b-Instruct-GGUF/resolve/main/qwen2.5-7b-instruct-q4_k_m.gguf
+
+      - name: 3. AUTO DOWNLOAD BUKU
+        run: |
+          mkdir -p data
+          wget -q -O data/kurikulum.pdf "https://cdn.kemdikbud.go.id/salinan-buku-kurikulum-merdeka/SMP/Kelas_7/Matematika/Buku_Siswa_Matematika_Kelas_7.pdf"
+          pdftotext data/kurikulum.pdf data/kurikulum.txt
+
+      - name: 4. GABUNG MATERI + PROMPT JADI 1 FILE
+        run: |
+          head -c 5000 data/kurikulum.txt > data/materi.txt
+          sed "s/{MATERI}/$(cat data/materi.txt | sed 's/"/\\"/g')/g" prompt.txt > data/final_prompt.txt
+
+      - name: 5. TEST Qwen Bikin 5 Soal
+        run: |
+          ./llama-cli -m qwen2.5-7b-instruct-q4_k_m.gguf \
+            --system "Kamu profesor matematika. Output HANYA JSON valid." \
+            --prompt "$(cat data/final_prompt.txt)" \
+            -n 4096 --temp 0.1 > data/hasil_test.json
+
+      - name: 6. UPLOAD JSON
+        uses: actions/upload-artifact@v4
+        with:
+          name: hasil-json-test
+          path: data/hasil_test.json
