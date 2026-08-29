@@ -8,7 +8,7 @@ print("CUDA:", torch.cuda.is_available())
 model_name = "Qwen/Qwen2-0.5B-Instruct"
 model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto", torch_dtype=torch.float16)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
-dataset = load_dataset("json", data_files="kursus_mtk_rumus.json")
+dataset = load_dataset("json", data_files="rumus.json")
 
 training_args = TrainingArguments(
     output_dir="./dewa_mtk_300mb",
