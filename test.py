@@ -1,23 +1,13 @@
 from transformers import pipeline
 import torch
 
-print("LOADING MODEL 300MB DARI FOLDER...")
-dewa = pipeline(
-    "text-generation", 
-    model="./dewa_mtk_300mb", 
-    dtype=torch.float16, # UDAH GANTI DARI torch_dtype
-    device_map="cpu", 
-    max_new_tokens=150
-)
+print("LOAD MODEL...")
+dewa = pipeline("text-generation", model="./dewa_mtk_300mb", dtype=torch.float16, device_map="cpu")
 
-pertanyaan = [
-    "Jelaskan rumus luas persegi untuk kelas 3 SD",
-    "Apa rumus keliling lingkaran kelas 6? Beri contoh"
-]
+pertanyaan = "Apa rumus luas persegi kelas 3 SD?"
+messages = [{"role": "user", "content": pertanyaan}]
+prompt = dewa.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
 
-for i, q in enumerate(pertanyaan):
-    print(f"\n=== TES {i+1}: {q} ===")
-    hasil = dewa(f"Pertanyaan: {q}\nJawaban:") # FORMAT HARUS SAMA KAYA TRAINING
-    print(hasil[0]['generated_text'])
-
-print("\nSELESAI TES. CEK JAWABAN DI ATAS")
+print("JAWABAN:")
+hasil = dewa(prompt, max_new_tokens=150)
+print(hasil[0]['generated_text'])
