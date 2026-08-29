@@ -44,9 +44,8 @@ def formatting_func(examples):
 print("3. MULAI TRAINING...")
 training_args = TrainingArguments(
     output_dir="./dewa_mtk_300mb",
-    num_train_epochs=3,
+    num_train_epochs=8,
     per_device_train_batch_size=1,
-    max_sew_length=512,
     logging_steps=50,
 )
 
