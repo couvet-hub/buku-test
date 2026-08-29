@@ -46,6 +46,7 @@ training_args = TrainingArguments(
     output_dir="./dewa_mtk_300mb",
     num_train_epochs=3,
     per_device_train_batch_size=1,
+    max_sew_length=512,
     logging_steps=50,
 )
 
@@ -53,7 +54,6 @@ trainer = SFTTrainer(
     model=model,
     train_dataset=dataset,
     formatting_func=formatting_func,
-    max_seq_length=512,
     args=training_args,
 )
 
