@@ -1,0 +1,50 @@
+name: Training Dewa MTK + Test + Push Model
+on:
+  workflow_dispatch: # Biar bisa pencet tombol Run manual
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Biar bisa push model ke repo
+    steps:
+      # 1. AMBIL KODE DARI REPO
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          lfs: true # Buat handle file gede 300MB
+
+      # 2. SETUP PYTHON
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      # 3. CACHE MODEL QWEN BIAR GA DOWNLOAD TIAP KALI
+      - name: Cache HuggingFace
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: qwen-0.5b-v1
+
+      # 4. INSTALL LIBRARY
+      - name: Install Dependencies
+        run: pip install -q transformers trl datasets accelerate torch safetensors
+
+      # 5. JALANIN TRAINING
+      - name: Training 894 Rumus
+        run: python train.py
+
+      # 6. TEST MODEL LANGSUNG DI GITHUB
+      - name: Test Model Dewa MTK
+        run: python test.py
+
+      # 7. PUSH HASIL MODEL KE REPO
+      - name: Push Model ke Repo
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git lfs track "dewa_mtk_300mb/*.safetensors"
+          git add.gitattributes dewa_mtk_300mb
+          git commit -m "Update Model v${{ github.run_number }} - $(date)" || echo "No changes to commit"
+          git push
